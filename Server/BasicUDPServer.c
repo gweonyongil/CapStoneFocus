@@ -1,111 +1,43 @@
-// BasicUDPServer.c
-// 20131187 �ǿ���
-//
-#include<stdio.h> //printf
-#include<string.h> //memset
-#include<stdlib.h> //exit(0);
-#include<arpa/inet.h>
-#include<sys/socket.h>
-#include <time.h>
+from datetime import datetime
+from socket import *
+from threading import Thread
 
-#define PORT 31187   //The port on which to listen for incoming data
-#define BUFLEN 1024
-void Handle(char *s)
-{
-	perror(s);
-	exit(1);
-}
+serverPort = 31187
+serverSocket = socket(AF_INET, SOCK_DGRAM)
+serverSocket.bind(('', serverPort))
+responseMessage = ''
 
-int main(void)
-{
-	struct sockaddr_in si_me, si_other;
-	int s_socket, slen = sizeof(si_other), recv_len;
-	int menu = 0;
-	char buf[BUFLEN];
+# Show message when the server is ready
+print("The server is ready to receive on port", serverPort)
 
-	//create a UDP socket
-	if ((s_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
-	{
-		Handle("socket() error");
-	}
+try:
+    while True:
+        message, clientAddress = serverSocket.recvfrom(2048)
+        # message Split example
+        stringA = "1 2 3 4 5 6 7 8 9"
+        listA = stringA.split(" ")
+        print(listA)
+        # Check Arudino or Android
+        # 만약 아두이노라면 값 갱신(온도 등등)
+        # 안드로이드라면 현재 값 전송(온도, 사진 등등)
 
-	// zero out the structure
-	memset((char *)&si_me, 0, sizeof(si_me));
-
-	si_me.sin_family = AF_INET;
-	si_me.sin_port = htons(PORT);
-	si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-
-	//bind socket to port
-	if (bind(s_socket, (struct sockaddr*)&si_me, sizeof(si_me)) == -1)
-	{
-		Handle("bind() error");
-	}
-
-	// Show message when the server is ready
-	printf("The server is ready to receive on port %d\n", PORT);
-
-	// Keep listening for data
-	while (1)
-	{
-		recvfrom(s_socket, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen);
-		if (atoi(buf) >= 1 && atoi(buf) <= 4) {
-			printf("Connection requested from ('%s',%d)\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
-			printf("Command %d\n\n", atoi(buf));
-			menu = atoi(buf);
-			memset(buf, 0, sizeof(buf));
-		}
-		else
-			break;
-		// Processing different message
-		// 1. To Upper
-		if (menu == 1) {
-			recvfrom(s_socket, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen);
-			int i = 0;
-			while (buf[i] != '\0') {
-				buf[i] = toupper(buf[i]);
-				i++;
-			}
-			sendto(s_socket, buf, strlen(buf), 0, (struct sockaddr*) &si_other, slen);
-		}
-		// 2. To Lower
-		else if (menu == 2) {
-			recvfrom(s_socket, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen);
-			int i = 0;
-			while (buf[i] != '\0') {
-				buf[i] = tolower(buf[i]);
-				i++;
-			}
-			sendto(s_socket, buf, strlen(buf), 0, (struct sockaddr*) &si_other, slen);
-		}
-		// 3. Get my IP address and port number
-		else if (menu == 3) {
-			char message[1024];
-			memset(message, 0, sizeof(message));
-			char temp[10];
-			snprintf(temp, 10, "%d", ntohs(si_other.sin_port));
-			// strcat
-			strcat(message, "IP : ");
-			strcat(message, inet_ntoa(si_other.sin_addr));
-			strcat(message, " Port : ");
-			strcat(message, temp);
-			// Send
-			sendto(s_socket, message, strlen(message), 0, (struct sockaddr*) &si_other, slen);
-		}
-		// 4. Get server time
-		else if (menu == 4) {
-			// Get Time
-			time_t t = time(NULL);
-			struct tm tm = *localtime(&t);
-			char message[1024];
-			memset(message, 0, sizeof(message));
-			snprintf(message, 1024, "%d-%d-%d %d:%d:%d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-			sendto(s_socket, message, strlen(message), 0, (struct sockaddr*) &si_other, slen);
-		}
-		// Clear buffer
-		memset(buf, 0, sizeof(buf));
-
-	}
-	close(s_socket);
-	return 0;
-}
+        print('Connection requested from', clientAddress)
+        # Processing message
+        print('Command ' + message.decode() +  '\n')
+        if message.decode() == '1':
+            responseMessage, clientAddress = serverSocket.recvfrom(2048)
+            responseMessage = responseMessage.decode().upper()
+        elif message.decode() == '2':
+            responseMessage, clientAddress = serverSocket.recvfrom(2048)
+            responseMessage = responseMessage.decode().lower()
+        elif message.decode() == '3':
+            responseMessage = 'IP : ' + clientAddress[0] + ' Port : ' + str(clientAddress[1])
+        elif message.decode() == '4':
+            responseMessage = datetime.now().isoformat()
+        # Send to Client
+        serverSocket.sendto(responseMessage.encode(), clientAddress)
+# Process Ctrl-C Interrupt
+except KeyboardInterrupt:
+    print('\n'
+          'Bye bye~')
+    serverSocket.close()
