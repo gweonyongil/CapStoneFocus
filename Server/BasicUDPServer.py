@@ -1,5 +1,6 @@
 from datetime import datetime
 from socket import *
+from threading import Thread
 
 serverPort = 31187
 serverSocket = socket(AF_INET, SOCK_DGRAM)
@@ -12,6 +13,14 @@ print("The server is ready to receive on port", serverPort)
 try:
     while True:
         message, clientAddress = serverSocket.recvfrom(2048)
+        # message Split example
+        stringA = "1 2 3 4 5 6 7 8 9"
+        listA = stringA.split(" ")
+        print(listA)
+        # Check Arudino or Android
+        # 만약 아두이노라면 값 갱신(온도 등등)
+        # 안드로이드라면 현재 값 전송(온도, 사진 등등)
+
         print('Connection requested from', clientAddress)
         # Processing message
         print('Command ' + message.decode() +  '\n')
