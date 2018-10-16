@@ -1,0 +1,19 @@
+int sensor = A0;
+int val = 0;
+
+void setup(){
+  Serial.begin(9600);
+  pinMode(sensor,INPUT);
+}
+void loop(){
+  val = analogRead(sensor);
+  Serial.println(val);
+  if(val < 100){
+    Serial.println("fire");
+    delay(1000);
+  }
+  else if(val >= 100){
+    Serial.println("non fire");
+    delay(1000);
+  }
+}
