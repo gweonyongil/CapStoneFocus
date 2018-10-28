@@ -8,4 +8,7 @@ class Executer:
         if command == "123\n":
             now = time.localtime()
             t = "%04d-%02d-%02d %02d %02d %02d" % (now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
-            self.andRaspTCP.sendAll(t + ":" + "32" + ":" + "0" + ":" + "100%" + "\n")
+            temp = 32
+            slope = 0
+            humid = 100
+            self.andRaspTCP.sendAll(t + ":" + temp + ":" + slope + ":" + humid + "%" + "\n")
