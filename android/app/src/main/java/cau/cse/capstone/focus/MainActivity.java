@@ -1,5 +1,11 @@
 package cau.cse.capstone.focus;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,7 +15,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -51,6 +61,19 @@ public class MainActivity extends AppCompatActivity {
         ItemInfoArrayList = new ArrayList<>();
         myAdapter = new ReAdapter(ItemInfoArrayList);
         mRecyclerView.setAdapter(myAdapter);
+        mRecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getApplicationContext(), mRecyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        // do whatever
+                        ItemInfo info = ItemInfoArrayList.get(position);
+                        showImage(info.drawableId);
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
 
         // StrictMode는 개발자가 실수하는 것을 감지하고 해결할 수 있도록 돕는 일종의 개발 툴
         // - 메인 스레드에서 디스크 접근, 네트워크 접근 등 비효율적 작업을 하려는 것을 감지하여
@@ -125,8 +148,50 @@ public class MainActivity extends AppCompatActivity {
 
             cur_data.setText("최근 온도 : " + s2 + "\n" + "최근 기울기 : " + s3 + "\n" + "최근 습도 : " + s4);
             String temp_str = "시간 : " + s1 + "\n" + "온도 : " + s2 + "\n" + "기울기 : " + s3 + "\n" + "습도 : " + s4;
-            ItemInfoArrayList.add(new ItemInfo(R.drawable.home, temp_str));
+            ItemInfoArrayList.add(0, new ItemInfo(R.drawable.home, temp_str));
             mRecyclerView.setAdapter(myAdapter);
         }
+    }
+
+    public void showImage(int Res) {
+        Dialog builder = new Dialog(this);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                //nothing;
+            }
+        });
+
+        ImageView imageView = new ImageView(this);
+        imageView.setImageResource(Res);
+        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+
+        Button button = new Button(this);
+        button.setText("119");
+        button.setTextColor(Color.parseColor("#CC0000"));
+        button.setTextSize(20);
+        button.setBackgroundColor(Color.parseColor("#ffffff"));
+
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:119"));
+                //Intent intent = new Intent(Intent.ACTION_CALL,Uri.parse("tel:12345"));
+                startActivity(intent);
+            }
+        });
+
+        builder.addContentView(button, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        builder.show();
     }
 }
