@@ -146,8 +146,8 @@ public class MainActivity extends AppCompatActivity {
             Log.i("i", s4);
 
 
-            cur_data.setText("최근 온도 : " + s2 + "\n" + "최근 기울기 : " + s3 + "\n" + "최근 습도 : " + s4);
-            String temp_str = "시간 : " + s1 + "\n" + "온도 : " + s2 + "\n" + "기울기 : " + s3 + "\n" + "습도 : " + s4;
+            cur_data.setText("최근 온도 : " + s2 + "\n" + "기울기 유무: " + s3 + "\n" + "불꽃 유무: " + s4);
+            String temp_str = "시간 : " + s1 + "\n" + "온도 : " + s2 + "\n" + "기울기 : " + s3 + "\n" + "불꽃 : " + s4;
             ItemInfoArrayList.add(0, new ItemInfo(R.drawable.home, temp_str));
             mRecyclerView.setAdapter(myAdapter);
         }
