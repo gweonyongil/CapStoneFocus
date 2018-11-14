@@ -41,7 +41,7 @@ public class ReAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
         MyViewHolder myViewHolder = (MyViewHolder) holder;
 
-        myViewHolder.ivPicture.setImageResource(InfoArrayList.get(position).drawableId);
+        myViewHolder.ivPicture.setImageBitmap(InfoArrayList.get(position).bm);
         myViewHolder.tv_data.setText(InfoArrayList.get(position).data);
     }
 

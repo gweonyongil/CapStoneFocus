@@ -3,6 +3,8 @@ package cau.cse.capstone.focus;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -13,6 +15,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private BufferedReader socketIn;
     private PrintWriter socketOut;
     private int port = 12345;
-    private final String ip = "165.194.17.186";
+    private final String ip = "192.168.43.114";
     private MyHandler myHandler;
     private MyThread myThread;
 
@@ -66,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override public void onItemClick(View view, int position) {
                         // do whatever
                         ItemInfo info = ItemInfoArrayList.get(position);
-                        showImage(info.drawableId);
+                        showImage(info.bm);
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
@@ -125,9 +128,11 @@ public class MainActivity extends AppCompatActivity {
     class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            // 메시지 처리(온도)
             String data = msg.obj.toString();
             StringTokenizer st = new StringTokenizer(data, ":");
+            String str_bm = st.nextToken();
+            Bitmap bm = StringToBitMap(str_bm);
+
             String s1 = st.nextToken();
             StringTokenizer time = new StringTokenizer(s1, " ");
             String date = time.nextToken();
@@ -148,12 +153,12 @@ public class MainActivity extends AppCompatActivity {
 
             cur_data.setText("최근 온도 : " + s2 + "\n" + "기울기 유무: " + s3 + "\n" + "불꽃 유무: " + s4);
             String temp_str = "시간 : " + s1 + "\n" + "온도 : " + s2 + "\n" + "기울기 : " + s3 + "\n" + "불꽃 : " + s4;
-            ItemInfoArrayList.add(0, new ItemInfo(R.drawable.home, temp_str));
+            ItemInfoArrayList.add(0, new ItemInfo(bm, temp_str));
             mRecyclerView.setAdapter(myAdapter);
         }
     }
 
-    public void showImage(int Res) {
+    public void showImage(Bitmap bm) {
         Dialog builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         builder.getWindow().setBackgroundDrawable(
@@ -166,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ImageView imageView = new ImageView(this);
-        imageView.setImageResource(Res);
+        imageView.setImageBitmap(bm);
         builder.addContentView(imageView, new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
@@ -193,5 +198,16 @@ public class MainActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
         builder.show();
+    }
+
+    public Bitmap StringToBitMap(String encodedString){
+        try {
+            byte [] encodeByte= Base64.decode(encodedString,Base64.DEFAULT);
+            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch(Exception e) {
+            e.getMessage();
+            return null;
+        }
     }
 }
