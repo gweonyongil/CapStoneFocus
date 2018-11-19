@@ -1,5 +1,7 @@
 from random import *
 import time
+import base64
+
 class Executer:
     def __init__(self, tcpServer):
         self.andRaspTCP = tcpServer
@@ -21,4 +23,13 @@ class Executer:
                 temp += 20
             else:
                 fire = 0
-            self.andRaspTCP.sendAll(t + ":" + str(temp) + ":" + str(slope) + ":" + str(fire) + "\n")
+            with open("untitled.png", "rb") as imageFile:
+                temp_str = base64.b64encode(imageFile.read())
+
+            n = 2048
+
+            li_da = [temp_str[i:i+n] for i in range(0, len(temp_str), n)]
+            for p in li_da:
+                print(str(p).replace("b'", ""))
+                self.andRaspTCP.sendAll(str(p).replace("b'", ""))
+            self.andRaspTCP.sendAll(":" + t + ":" + str(temp) + ":" + str(slope) + ":" + str(fire) + "\n")
