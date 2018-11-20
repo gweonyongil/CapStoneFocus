@@ -41,13 +41,14 @@ public class MainActivity extends AppCompatActivity {
 
     Button btn;
     TextView cur_data;
+    String sms_info;
 
     //  TCP Connection
     private Socket clientSocket;
     private BufferedReader socketIn;
     private PrintWriter socketOut;
     private int port = 12345;
-    private final String ip = "192.168.43.114";
+    private final String ip = "175.197.22.4";
     private MyHandler myHandler;
     private MyThread myThread;
 
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override public void onItemClick(View view, int position) {
                         // do whatever
                         ItemInfo info = ItemInfoArrayList.get(position);
-                        showImage(info.bm);
+                        showImage(info.bm, position);
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
@@ -166,7 +167,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showImage(Bitmap bm) {
+    public void showImage(Bitmap bm, int position) {
+        ItemInfo info = ItemInfoArrayList.get(position);
+        sms_info = info.data.toString();
+
         Dialog builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         builder.getWindow().setBackgroundDrawable(
@@ -211,7 +215,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // 전송 구현
-                
+                Intent smsIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("sms:119"));
+                smsIntent.putExtra("sms_body", sms_info);
+                startActivity(smsIntent);
             }
         });
 
