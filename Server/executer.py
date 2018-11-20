@@ -1,4 +1,5 @@
 from random import *
+from PIL import Image
 import time
 import base64
 
@@ -23,13 +24,19 @@ class Executer:
                 temp += 20
             else:
                 fire = 0
-            with open("untitled.png", "rb") as imageFile:
-                temp_str = base64.b64encode(imageFile.read())
 
+            # Image Zip, Resize
+            img = Image.open('big.jpg')
+            img = img.resize((350, 250))
+            img.save('test2.jpg')
+
+            with open("test2.jpg", "rb") as imageFile:
+                temp_str = base64.b64encode(imageFile.read())
             n = 2048
 
             li_da = [temp_str[i:i+n] for i in range(0, len(temp_str), n)]
+            print(len(temp_str))
             for p in li_da:
-                print(str(p).replace("b'", ""))
-                self.andRaspTCP.sendAll(str(p).replace("b'", ""))
+                print(str(p).replace("b'", "").replace("'", "").replace("=", ""))
+                self.andRaspTCP.sendAll(str(p).replace("b'", "").replace("'", "").replace("=", ""))
             self.andRaspTCP.sendAll(":" + t + ":" + str(temp) + ":" + str(slope) + ":" + str(fire) + "\n")
