@@ -128,10 +128,13 @@ public class MainActivity extends AppCompatActivity {
     class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
+
             String data = msg.obj.toString();
             StringTokenizer st = new StringTokenizer(data, ":");
             String str_bm = st.nextToken();
-            Bitmap bm = StringToBitMap(str_bm);
+            Log.i("Packet BM", " " + str_bm.length());
+            Log.i("Packet DATA", " " + data.length());
+            Bitmap bm = StringToBitMap(data);
 
             String s1 = st.nextToken();
             StringTokenizer time = new StringTokenizer(s1, " ");
@@ -172,9 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView imageView = new ImageView(this);
         imageView.setImageBitmap(bm);
-        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+        builder.addContentView(imageView, new RelativeLayout.LayoutParams(700,560));
 
         Button button = new Button(this);
         button.setText("119");
@@ -203,10 +204,12 @@ public class MainActivity extends AppCompatActivity {
     public Bitmap StringToBitMap(String encodedString){
         try {
             byte [] encodeByte= Base64.decode(encodedString,Base64.DEFAULT);
+            // byte [] encodeByte = encodedString.getBytes();
             Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
             return bitmap;
         } catch(Exception e) {
             e.getMessage();
+            Log.i("Packet STB : ", e.getMessage());
             return null;
         }
     }
