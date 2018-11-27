@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "494082528653",
+    "firebase_url": "https://capstone-focus.firebaseio.com",
+    "project_id": "capstone-focus",
+    "storage_bucket": "capstone-focus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494082528653:android:38c48617e768004c",
+        "android_client_info": {
+          "package_name": "cau.cse.capstone.focus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "494082528653-oqihdhbl89opjlr2a2odm8449ejvanaf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cau.cse.capstone.focus",
+            "certificate_hash": "98196e490e28377840c4ca888c866a254f8fe1c7"
+          }
+        },
+        {
+          "client_id": "494082528653-5j5odgl2rqu164bgrvr76scuokb5ifpj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZwV90rhnJuWhOblX_UR-rOqYJDduSRy4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "494082528653-5j5odgl2rqu164bgrvr76scuokb5ifpj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

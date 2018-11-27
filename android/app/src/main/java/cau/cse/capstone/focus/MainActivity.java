@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -40,13 +41,14 @@ public class MainActivity extends AppCompatActivity {
 
     Button btn;
     TextView cur_data;
+    String sms_info;
 
     //  TCP Connection
     private Socket clientSocket;
     private BufferedReader socketIn;
     private PrintWriter socketOut;
     private int port = 12345;
-    private final String ip = "192.168.43.114";
+    private final String ip = "220.70.47.203";
     private MyHandler myHandler;
     private MyThread myThread;
 
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override public void onItemClick(View view, int position) {
                         // do whatever
                         ItemInfo info = ItemInfoArrayList.get(position);
-                        showImage(info.bm);
+                        showImage(info.bm, position);
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
@@ -128,10 +130,13 @@ public class MainActivity extends AppCompatActivity {
     class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
+
             String data = msg.obj.toString();
             StringTokenizer st = new StringTokenizer(data, ":");
             String str_bm = st.nextToken();
-            Bitmap bm = StringToBitMap(str_bm);
+            Log.i("Packet BM", " " + str_bm.length());
+            Log.i("Packet DATA", " " + data.length());
+            Bitmap bm = StringToBitMap(data);
 
             String s1 = st.nextToken();
             StringTokenizer time = new StringTokenizer(s1, " ");
@@ -150,6 +155,10 @@ public class MainActivity extends AppCompatActivity {
             Log.i("i", s3);
             Log.i("i", s4);
 
+            // 사고 발생 시 Processing
+            if(Integer.parseInt(s2) >= 50 && s3 == "1" && s4 == "1"){
+                Toast.makeText(getApplicationContext(), "사고 발생", Toast.LENGTH_SHORT).show();
+            }
 
             cur_data.setText("최근 온도 : " + s2 + "\n" + "기울기 유무: " + s3 + "\n" + "불꽃 유무: " + s4);
             String temp_str = "시간 : " + s1 + "\n" + "온도 : " + s2 + "\n" + "기울기 : " + s3 + "\n" + "불꽃 : " + s4;
@@ -158,7 +167,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showImage(Bitmap bm) {
+    public void showImage(Bitmap bm, int position) {
+        ItemInfo info = ItemInfoArrayList.get(position);
+        sms_info = info.data.toString();
+
         Dialog builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         builder.getWindow().setBackgroundDrawable(
@@ -172,9 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView imageView = new ImageView(this);
         imageView.setImageBitmap(bm);
-        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+        builder.addContentView(imageView, new RelativeLayout.LayoutParams(700,560));
 
         Button button = new Button(this);
         button.setText("119");
@@ -194,19 +204,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button sms_button = new Button(this);
+        sms_button.setText("SMS");
+        sms_button.setTextColor(Color.parseColor("#CC0000"));
+        sms_button.setTextSize(20);
+        sms_button.setBackgroundColor(Color.parseColor("#ffffff"));
+
+        sms_button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                // 전송 구현
+                Intent smsIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("sms:119"));
+                smsIntent.putExtra("sms_body", sms_info);
+                startActivity(smsIntent);
+            }
+        });
+
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);;
+        lp.setMargins(550,0,0, 0);
         builder.addContentView(button, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
+        builder.addContentView(sms_button, lp);
         builder.show();
     }
 
     public Bitmap StringToBitMap(String encodedString){
         try {
             byte [] encodeByte= Base64.decode(encodedString,Base64.DEFAULT);
+            // byte [] encodeByte = encodedString.getBytes();
             Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
             return bitmap;
         } catch(Exception e) {
             e.getMessage();
+            Log.i("Packet STB : ", e.getMessage());
             return null;
         }
     }
