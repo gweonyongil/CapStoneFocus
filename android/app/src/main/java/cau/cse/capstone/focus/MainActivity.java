@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private BufferedReader socketIn;
     private PrintWriter socketOut;
     private int port = 12345;
-    private final String ip = "220.70.47.203";
+    private final String ip = "192.168.43.114";
     private MyHandler myHandler;
     private MyThread myThread;
 
