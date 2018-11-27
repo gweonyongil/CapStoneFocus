@@ -26,11 +26,11 @@ class Executer:
                 fire = 0
 
             # Image Zip, Resize
-            img = Image.open('big.jpg')
+            img = Image.open('home.jpg')
             img = img.resize((350, 250))
-            img.save('test2.jpg')
+            img.save('test.jpg')
 
-            with open("test2.jpg", "rb") as imageFile:
+            with open("test.jpg", "rb") as imageFile:
                 temp_str = base64.b64encode(imageFile.read())
             n = 2048
 
