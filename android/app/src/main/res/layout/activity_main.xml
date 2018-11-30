@@ -20,24 +20,38 @@
         android:layout_weight="3"
         android:background="#555555"
         android:paddingTop="20dp"
-        android:paddingBottom="20dp"
         android:paddingLeft="30dp"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical">
+        android:orientation="horizontal">
         <TextView
             android:textSize="20dp"
             android:text="온도 : \n기울기 : \n습도 : "
             android:id="@+id/t_cur_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:layout_gravity="right"
-            android:id="@+id/btn"
-            android:text="새로고침"/>
+            android:orientation="vertical"
+            android:layout_gravity="right">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="right"
+                android:id="@+id/btn"
+                android:text="새로고침"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="right"
+                android:id="@+id/btn2"
+                android:text="Sign Out"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     ReAdapter myAdapter;
     ArrayList<ItemInfo> ItemInfoArrayList;
 
-    Button btn;
+    Button btn, btn2;
     TextView cur_data;
     String sms_info;
 
@@ -48,14 +48,21 @@ public class MainActivity extends AppCompatActivity {
     private BufferedReader socketIn;
     private PrintWriter socketOut;
     private int port = 12345;
-    private final String ip = "192.168.43.114";
+    private final String ip = "175.197.22.200";
     private MyHandler myHandler;
     private MyThread myThread;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("i", "Main_onCreate");
         setContentView(R.layout.activity_main);
+
+        //get notification data info
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            //bundle must contain all info sent in "data" field of the notification
+        }
 
         // Recycler View
         mRecyclerView = findViewById(R.id.recycler_view);
@@ -99,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         myThread.start();
 
         btn = (Button) findViewById(R.id.btn);
+        btn2 = (Button) findViewById(R.id.btn2);
         cur_data = (TextView) findViewById(R.id.t_cur_data);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +114,20 @@ public class MainActivity extends AppCompatActivity {
                 socketOut.println(123);
             }
         });
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((GoogleSignInActivity)GoogleSignInActivity.mContext).signOut();
+                startActivity(new Intent(MainActivity.this, GoogleSignInActivity.class));
+                finish();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        Log.i("i", "Main_onResume");
+        super.onResume();
     }
 
     class MyThread extends Thread {
